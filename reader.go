@@ -1423,7 +1423,10 @@ func (this *PdfReader) rebuildContentStream(content *PdfValue) ([]byte, error) {
 		case "/FlateDecode":
 			// Uncompress zlib compressed data
 			var out bytes.Buffer
-			zlibReader, _ := zlib.NewReader(bytes.NewBuffer(stream))
+			zlibReader, err := zlib.NewReader(bytes.NewBuffer(stream))
+			if err != nil {
+				return nil, errors.Wrap(err, "Failed to create zlib reader")
+			}
 			defer zlibReader.Close()
 			io.Copy(&out, zlibReader)
 
